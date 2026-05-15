@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  /* Industrial Minimalist Palette - Stone, Charcoal, Terracotta */
+  --color-primary: #181919; /* Muted Charcoal */
+  --color-on-primary: #ffffff;
+  --color-primary-container: #2d2d2d;
+  --color-on-primary-container: #454646;
+  --color-on-surface-variant: #454646;
+  
+  --color-secondary: #a73918; /* Terracotta */
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fe7952;
+  --color-on-secondary-container: #6c1900;
+  
+  --color-tertiary: #0a1c10; /* Soft Olive */
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #1f3124;
+  --color-on-tertiary-container: #4a5d4d;
+  
+  --color-surface: #fbf9f6;
+  --color-on-surface: #1b1c1a;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f3f0;
+  --color-surface-container: #efeeeb;
+  --color-surface-container-high: #eae8e5;
+  --color-surface-container-highest: #e4e2df;
+  
+  --color-outline: #5a5d5d;
+  --color-outline-variant: #8a8d8d; /* Stone-600 equivalent approx */
+  
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* Spacing - Fibonacci Scale */
+  --spacing-fib-1: 1px;
+  --spacing-fib-2: 2px;
+  --spacing-fib-3: 3px;
+  --spacing-fib-5: 5px;
+  --spacing-fib-8: 8px;
+  --spacing-fib-13: 13px;
+  --spacing-fib-21: 21px;
+  --spacing-fib-34: 34px;
+  --spacing-fib-55: 55px;
+
+  /* Sharp Geometric Shapes - 0px radius everywhere */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+}
+
+@layer base {
+  * {
+    @apply border-outline-variant;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  html {
+    @apply antialiased scroll-smooth;
+    font-feature-settings: "cv02", "cv05", "cv11", "ss01";
+  }
+
+  body {
+    @apply bg-surface text-on-surface selection:bg-primary/20;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-outline-variant rounded-full hover:bg-outline;
+  }
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fade-in-up 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+.glass {
+  @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl;
+}
