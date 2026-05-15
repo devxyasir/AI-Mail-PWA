@@ -1,25 +1,41 @@
-import { pipeline } from '@xenova/transformers';
-
 /**
  * Singleton for the embedding pipeline to avoid reloading the model.
  */
 let embeddingPipeline: any = null;
 
 async function getPipeline() {
-  if (!embeddingPipeline) {
-    console.log('[AI] Loading local embedding model (sentence-transformers/all-MiniLM-L6-v2)...');
-    embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-    console.log('[AI] Local embedding model loaded.');
+  if (process.env.NODE_ENV === 'production') {
+    // Local embeddings are heavy and often fail on Vercel due to memory/timeout.
+    // In production, we skip them unless we switch to an API-based service.
+    return null;
   }
-  return embeddingPipeline;
+
+  try {
+    const { pipeline, env } = await import('@xenova/transformers');
+    
+    // Configure for serverless environment
+    env.allowLocalModels = false;
+    env.useBrowserCache = false;
+
+    if (!embeddingPipeline) {
+      console.log('[AI] Loading local embedding model...');
+      embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+      console.log('[AI] Local embedding model loaded.');
+    }
+    return embeddingPipeline;
+  } catch (err) {
+    console.error('[AI] Failed to load embedding pipeline:', err);
+    return null;
+  }
 }
 
 /**
  * Helpers for generating vector embeddings locally using Transformers.js.
  */
-export async function createEmbedding(text: string): Promise<number[]> {
+export async function createEmbedding(text: string): Promise<number[] | null> {
   try {
     const extractor = await getPipeline();
+    if (!extractor) return null;
     
     // Generate embeddings
     const output = await extractor(text.substring(0, 5000), {
@@ -31,7 +47,7 @@ export async function createEmbedding(text: string): Promise<number[]> {
     return Array.from(output.data) as number[];
   } catch (error: any) {
     console.error(`[AI] Local Embedding failed:`, error.message);
-    throw error;
+    return null;
   }
 }
 

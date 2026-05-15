@@ -61,10 +61,12 @@ STANDALONE QUERY:`;
     let context = '';
     try {
       const queryEmbedding = await createEmbedding(searchQuery);
-      const vectorResults = await searchEmailsVector(queryEmbedding, userId, 7);
       
-      if (vectorResults && vectorResults.length > 0) {
-        context += vectorResults.map((r: any) => `[RELEVANT EMAIL] CONTENT: ${r.content}\n---\n`).join('\n');
+      if (queryEmbedding) {
+        const vectorResults = await searchEmailsVector(queryEmbedding, userId, 7);
+        if (vectorResults && vectorResults.length > 0) {
+          context += vectorResults.map((r: any) => `[RELEVANT EMAIL] CONTENT: ${r.content}\n---\n`).join('\n');
+        }
       }
     } catch (e) {
       console.warn('[AI] Semantic search failed, falling back.');
@@ -109,8 +111,12 @@ Tone: Professional, smart, concise.`;
     const response = await callAI(aiMessages, { temperature: 0.3, maxTokens: 800 });
 
     return NextResponse.json({ message: response });
-  } catch (error) {
+  } catch (error: any) {
     console.error('[API] Chat error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    }, { status: 500 });
   }
 }
