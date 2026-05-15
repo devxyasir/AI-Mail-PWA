@@ -19,7 +19,7 @@ export interface NormalizedEmailMessage {
   isStarred: boolean;
   labels: string[];
   attachments?: EmailAttachment[];
-  priority?: 'urgent' | 'important' | 'direct' | 'digest' | 'receipt' | 'social' | 'low';
+  priority?: 'urgent' | 'high' | 'important' | 'direct' | 'digest' | 'receipt' | 'social' | 'low';
   aiScore?: number;
   aiSummary?: string;
   accountId?: string;

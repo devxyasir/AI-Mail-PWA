@@ -22,6 +22,11 @@ INSTRUCTIONS:
 2. Generate or improve the SUBJECT line. If a subject exists, refine it. If not, create a compelling one.
 3. Return the result in a valid JSON format with "subject" and "body" keys.
 
+FORMATTING RULES:
+- Use PLAIN TEXT only.
+- NO Markdown (no **, #, *, or [links]).
+- Use standard line breaks and spacing.
+
 STRICT INSTRUCTION: RETURN ONLY THE JSON OBJECT. NO PREAMBLE. NO POSTAMBLE.
 `.trim() : `
 The user wants to modify the previous email draft.
@@ -38,12 +43,20 @@ INSTRUCTIONS:
 3. If the subject needs changing based on the edit, update it.
 4. Return the result in a valid JSON format with "subject" and "body" keys.
 
+FORMATTING RULES:
+- Use PLAIN TEXT only.
+- NO Markdown (no **, #, *, or [links]).
+- Use standard line breaks and spacing.
+
 STRICT INSTRUCTION: RETURN ONLY THE JSON OBJECT. NO PREAMBLE. NO POSTAMBLE.
 `.trim();
 
   try {
     const messages: any[] = [
-      { role: 'system', content: 'You are a professional email composer. You output JSON with "subject" and "body" keys.' }
+      { 
+        role: 'system', 
+        content: 'You are a professional email composer. You output JSON with "subject" and "body" keys. IMPORTANT: The body MUST be PLAIN TEXT only. DO NOT use Markdown formatting (no **, #, *, or [links]). Use standard line breaks for formatting.' 
+      }
     ];
 
     // If we have history, we could add it here, but the prompt above already includes it for simplicity

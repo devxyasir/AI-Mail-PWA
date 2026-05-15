@@ -27,7 +27,7 @@ export default function InboxPage() {
   const [selected, setSelected] = useState<{ id: string; accountId: string } | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
-  const [composeInitial, setComposeInitial] = useState<{ to?: string; subject?: string; body?: string }>({});
+  const [composeInitial, setComposeInitial] = useState<{ to?: string; subject?: string; body?: string; accountId?: string }>({});
 
   // Handle mobile triggers from nav
   React.useEffect(() => {
@@ -35,18 +35,20 @@ export default function InboxPage() {
     if (triggerSearch) setIsSearchVisible(true);
   }, [triggerAi, triggerSearch]);
 
-  const openCompose = (to = '', subject = '', body = '') => {
-    setComposeInitial({ to, subject, body });
+  const openCompose = (to = '', subject = '', body = '', accountId?: string) => {
+    setComposeInitial({ to, subject, body, accountId });
     setIsComposeOpen(true);
   };
 
   const handleUseDraft = (content: string) => {
     // Determine subject for the reply
-    const subject = messages.find(m => m.id === selected?.id)?.subject || '';
+    const msg = messages.find(m => m.id === selected?.id);
+    const subject = msg?.subject || '';
     const replySubject = subject.toLowerCase().startsWith('re:') ? subject : `Re: ${subject}`;
-    const to = messages.find(m => m.id === selected?.id)?.from || '';
+    const to = msg?.from || '';
+    const accountId = msg?.accountId;
 
-    openCompose(to, replySubject, content);
+    openCompose(to, replySubject, content, accountId);
   };
 
   const getKey = (pageIndex: number, previousPageData: any) => {
@@ -133,17 +135,18 @@ export default function InboxPage() {
 
       {/* Header */}
       <header className="flex h-fib-55 items-center justify-between border-b border-outline-variant px-fib-13 lg:px-fib-21 bg-surface-container-lowest sticky top-0 z-20">
-        <div className="flex items-center gap-fib-8 lg:gap-fib-13 flex-1 overflow-hidden">
+        <div className="flex items-center gap-fib-8 lg:gap-fib-13 overflow-hidden mr-2">
           <button 
             onClick={toggleSidebar}
-            className="lg:hidden p-fib-8 text-on-surface-variant hover:bg-surface-container transition-colors"
+            className="lg:hidden p-fib-8 text-on-surface-variant hover:bg-surface-container transition-colors shrink-0"
           >
             <Menu className="h-fib-21 w-fib-21" />
           </button>
           
-          <div className="p-fib-5 bg-primary text-on-primary shrink-0 hidden xs:block">
+          <div className="p-fib-5 bg-primary text-on-primary shrink-0 hidden sm:block">
             <Mail className="h-fib-18 lg:h-fib-21 w-fib-18 lg:h-fib-21" />
           </div>
+          
           <div className="overflow-hidden min-w-0">
             <h1 className="text-sm lg:text-lg font-serif font-bold tracking-tight text-on-surface uppercase truncate">
               {priority ? priority : labelId.replace(/^CATEGORY_/, '')}
@@ -154,18 +157,28 @@ export default function InboxPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-fib-2 lg:gap-fib-8">
+        <div className="flex items-center gap-fib-2 lg:gap-fib-8 shrink-0">
           {/* Search Input (Conditional) */}
           {isSearchVisible && (
-            <form onSubmit={handleSearch} className="flex items-center animate-in slide-in-from-right-fib-13">
+            <form 
+              onSubmit={handleSearch} 
+              className="absolute inset-x-0 top-0 h-full bg-surface-container-lowest z-30 px-fib-13 flex items-center gap-2 lg:relative lg:inset-auto lg:h-auto lg:bg-transparent lg:px-0 animate-in fade-in slide-in-from-top-fib-5 lg:animate-none"
+            >
               <input
                 autoFocus
                 type="text"
                 placeholder="SEARCH..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="bg-surface-container border border-outline-variant px-fib-8 lg:px-fib-13 py-fib-5 text-[10px] lg:text-[11px] font-mono font-bold focus:outline-none focus:border-primary w-24 lg:w-48 transition-all"
+                className="flex-1 bg-surface-container border border-outline-variant px-fib-8 lg:px-fib-13 py-fib-5 text-[10px] lg:text-[11px] font-mono font-bold focus:outline-none focus:border-primary lg:w-48 transition-all uppercase"
               />
+              <button 
+                type="button" 
+                onClick={() => setIsSearchVisible(false)}
+                className="p-fib-8 text-on-surface-variant lg:hidden"
+              >
+                <X className="h-fib-21 w-fib-21" />
+              </button>
             </form>
           )}
 
@@ -176,7 +189,7 @@ export default function InboxPage() {
             <Search className="h-fib-18 lg:h-fib-21 w-fib-18 lg:h-fib-21" />
           </button>
 
-          <div className="relative hidden xs:block">
+          <div className="relative">
             <button
               onClick={() => setIsFilterVisible(!isFilterVisible)}
               className={`p-fib-8 transition-colors ${isFilterVisible ? 'text-primary bg-surface-container' : 'text-on-surface-variant hover:bg-surface-container'}`}
@@ -198,12 +211,12 @@ export default function InboxPage() {
             )}
           </div>
 
-          <div className="h-fib-21 w-fib-1 bg-outline-variant/30 hidden xs:block" />
+          <div className="h-fib-21 w-fib-1 bg-outline-variant/30 hidden sm:block" />
           <button
-            onClick={() => openCompose()}
-            className="px-fib-13 lg:px-fib-21 py-fib-8 bg-secondary text-on-secondary font-mono font-bold text-[10px] lg:text-[11px] uppercase tracking-widest hover:bg-secondary/90 transition-all whitespace-nowrap"
+            onClick={() => openCompose('', '', '', messages[0]?.accountId)}
+            className="flex items-center justify-center gap-2 px-fib-13 lg:px-fib-21 py-fib-8 bg-secondary text-on-secondary font-mono font-bold text-[10px] lg:text-[11px] uppercase tracking-widest hover:bg-secondary/90 transition-all whitespace-nowrap"
           >
-            Compose
+            <span>Compose</span>
           </button>
         </div>
       </header>
@@ -292,6 +305,7 @@ export default function InboxPage() {
           initialTo={composeInitial.to}
           initialSubject={composeInitial.subject}
           initialBody={composeInitial.body}
+          initialAccountId={composeInitial.accountId}
         />
       )}
     </div>

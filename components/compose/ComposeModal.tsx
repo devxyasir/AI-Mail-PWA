@@ -10,12 +10,14 @@ interface ComposeModalProps {
   initialTo?: string;
   initialSubject?: string;
   initialBody?: string;
+  initialAccountId?: string;
 }
 
-export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject = '', initialBody = '' }: ComposeModalProps) {
+export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject = '', initialBody = '', initialAccountId }: ComposeModalProps) {
   const [to, setTo] = useState(initialTo);
   const [subject, setSubject] = useState(initialSubject);
   const [body, setBody] = useState(initialBody);
+  const [accountId, setAccountId] = useState(initialAccountId);
   const [isSending, setIsSending] = useState(false);
   const [isDrafting, setIsDrafting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -37,6 +39,7 @@ export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject =
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: draftId || undefined,
+            account_id: accountId,
             to_emails: to.split(',').map(e => e.trim()).filter(e => !!e),
             subject,
             body,
@@ -52,7 +55,7 @@ export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject =
     }, 10000); // 10s auto-save
 
     return () => clearInterval(timer);
-  }, [to, subject, body, draftId]);
+  }, [to, subject, body, draftId, accountId]);
 
   const handleSend = async () => {
     if (!to || isSending) return;
@@ -62,6 +65,7 @@ export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject =
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          accountId,
           to: to.split(',').map(e => e.trim()),
           subject,
           body
@@ -132,6 +136,7 @@ export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject =
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: draftId || undefined,
+          account_id: accountId,
           to_emails: to.split(',').map(e => e.trim()).filter(e => !!e),
           subject,
           body,
@@ -224,11 +229,11 @@ export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject =
                   <Button variant="outline" onClick={() => setShowPrompt(false)}>CANCEL</Button>
                   <Button 
                     variant="primary" 
-                    onClick={handleAIWrite} 
+                    onClick={() => handleAIWrite(false)} 
                     isLoading={isDrafting}
                     leftIcon={<Layers className="h-fib-13 w-fib-13" />}
                   >
-                    SYNTHESIZE CONTENT
+                    CRAFT EMAIL
                   </Button>
                 </div>
               </div>

@@ -1,15 +1,22 @@
 import { db } from '@/lib/db/client';
 import type { NormalizedEmailMessage } from '@/lib/email/types';
 
+// Force re-build trigger: High-performance intelligence worker v1.0.1
+const yieldToMain = () => new Promise(resolve => setTimeout(resolve, 10));
+
 /**
  * High-speed background worker for indexing and prioritization.
+ * Optimized to prevent event loop starvation by yielding to the main thread.
  */
 export async function triggerEmailIndexing(accountId: string, messages: NormalizedEmailMessage[]) {
+  // Give the web server a head start to finish the response
+  await new Promise(resolve => setTimeout(resolve, 500));
+
   try {
     const { createEmbedding } = await import('@/lib/ai/embeddings');
     const { calculatePriority } = await import('@/lib/ai/priority');
 
-    // 1. Check for existing priorities in BATCH to avoid N+1 queries
+    // 1. Check for existing priorities in BATCH
     const providerIds = messages.map(m => m.providerMessageId);
     const { data: existingData } = await db()
       .from('email_ai_data')
@@ -19,19 +26,23 @@ export async function triggerEmailIndexing(accountId: string, messages: Normaliz
 
     const existingMap = new Map((existingData as any[])?.map(d => [d.provider_message_id, d]) || []);
 
-    // 2. Process Priorities (Only for NEW or missing messages)
-    const priorityResults = await Promise.all(messages.map(async (m) => {
+    // 2. Process Priorities (SEQUENTIAL with Yields to avoid blocking)
+    const priorityResults: NormalizedEmailMessage[] = [];
+    
+    for (const m of messages) {
       try {
         const existing = existingMap.get(m.providerMessageId);
         
         if (existing?.priority_label && existing?.priority_score !== undefined) {
-          return { ...m, priority: existing.priority_label };
+          priorityResults.push({ ...m, priority: existing.priority_label });
+          continue;
         }
 
-        console.log(`[AI] Analyzing: "${m.subject.substring(0, 30)}..."`);
-        const { calculatePriority } = await import('@/lib/ai/priority');
+        // yield to event loop before every heavy AI call
+        await yieldToMain();
+
+        console.log(`[AI] Background Analyzing: "${m.subject.substring(0, 30)}..."`);
         const p = await calculatePriority(m.from, m.subject, m.snippet, m.labels);
-        console.log(`[AI] Priority for "${m.providerMessageId}": ${p.label} (${p.score})`);
         
         await (db() as any).from('email_ai_data').upsert({
           account_id: accountId,
@@ -41,27 +52,26 @@ export async function triggerEmailIndexing(accountId: string, messages: Normaliz
           category: p.category
         } as any, { onConflict: 'account_id,provider_message_id' });
 
-        return { ...m, priority: p.label };
+        priorityResults.push({ ...m, priority: p.label });
       } catch (err) {
-        console.error(`[AI] Priority failed for ${m.providerMessageId}:`, err);
-        return { ...m, priority: 'low' };
+        console.error(`[AI] Background Priority failed:`, err);
+        priorityResults.push({ ...m, priority: 'low' });
       }
-    }));
+    }
 
-    // 2. Process Embeddings (Semantic Search)
-    // We prioritize Urgent/High messages for embedding generation
+    // 3. Process Embeddings (Semantic Search)
     const priorityMap: Record<string, number> = { urgent: 0, high: 1, medium: 2, low: 3 };
     const sortedForEmbeddings = [...priorityResults].sort((a, b) => 
       (priorityMap[a.priority as string] ?? 2) - (priorityMap[b.priority as string] ?? 2)
     );
 
-    // Limit embedding generation to avoid hitting rate limits too hard
-    // We only do embeddings for the most important ones in each batch if it's large
-    const embeddingBatch = sortedForEmbeddings.slice(0, 20);
+    // Only index the top 5 most important messages per request to save resources
+    const embeddingBatch = sortedForEmbeddings.slice(0, 5);
 
     for (const m of embeddingBatch) {
       try {
-        // Check if already indexed
+        await yieldToMain(); // yielding
+
         const { data: existing } = await db()
           .from('email_embeddings')
           .select('provider_message_id')
@@ -82,7 +92,7 @@ export async function triggerEmailIndexing(accountId: string, messages: Normaliz
           updated_at: new Date().toISOString()
         } as any, { onConflict: 'account_id,provider_message_id' });
       } catch (err) {
-        console.warn(`[AI] Embedding failed for ${m.providerMessageId}:`, err);
+        console.warn(`[AI] Embedding failed:`, err);
       }
     }
   } catch (e) {
