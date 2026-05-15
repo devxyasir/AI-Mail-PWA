@@ -1,11 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
+import useSWR from 'swr';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Mail, Shield, Globe, Lock, Cpu, Server, Layers, ChevronRight } from 'lucide-react';
+import { Mail, Shield, Globe, Lock, Cpu, Server, Layers, ChevronRight, LayoutDashboard } from 'lucide-react';
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export default function SignInPage() {
+  const router = useRouter();
+  const { data } = useSWR('/api/accounts', fetcher);
+  const accounts = data?.accounts || [];
+  
   const [showImap, setShowImap] = useState(false);
   const [showMicrosoftWarning, setShowMicrosoftWarning] = useState(false);
   const [imapData, setImapData] = useState({
@@ -78,6 +86,22 @@ export default function SignInPage() {
 
           {!showImap && !showMicrosoftWarning ? (
             <div className="space-y-fib-13">
+              {accounts.length > 0 && (
+                <div className="pb-fib-13 mb-fib-13 border-b border-outline-variant/20">
+                  <Button 
+                    onClick={() => router.push('/inbox')}
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    className="justify-between group h-fib-55 animate-in fade-in slide-in-from-top-fib-5"
+                    leftIcon={<LayoutDashboard className="h-fib-13 w-fib-13" />}
+                    rightIcon={<ChevronRight className="h-fib-13 w-fib-13" />}
+                  >
+                    GO TO DASHBOARD
+                  </Button>
+                </div>
+              )}
+
               <Button 
                 onClick={() => signIn('google', { callbackUrl: '/inbox' })}
                 variant="outline"
@@ -99,7 +123,7 @@ export default function SignInPage() {
                 leftIcon={<Layers className="h-fib-13 w-fib-13 text-primary" />}
                 rightIcon={<ChevronRight className="h-fib-13 w-fib-13 opacity-0 group-hover:opacity-100 transition-all" />}
               >
-                Microsoft Azure
+                Office 365
               </Button>
 
               <Button 

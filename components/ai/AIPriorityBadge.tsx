@@ -27,7 +27,7 @@ export function AIPriorityBadge({ label = 'low', score, category, className = ''
       inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm transition-all
       ${config.bg} ${config.text} ${config.border} ${className}
     `}>
-      <Icon className={`h-3 w-3 ${activeCategory === 'URGENT' ? 'animate-pulse' : ''}`} />
+      <Icon className={`h-3 w-3 ${config.iconColor || ''} ${activeCategory === 'URGENT' ? 'animate-pulse' : ''}`} />
       <div className="flex items-center gap-1">
         <span className="font-mono">{activeCategory || label}</span>
         {activeCategory && activeCategory !== label.toUpperCase() && (
@@ -50,19 +50,19 @@ function getPriorityConfig(label: PriorityLabel, category?: PriorityCategory) {
     return { bg: 'bg-secondary', text: 'text-on-secondary', border: 'border-secondary-container', icon: Bookmark };
   }
   if (category === 'MEDIUM') {
-    // Use a lighter blue with better contrast for the dark theme
-    return { bg: 'bg-primary/30', text: 'text-blue-300', border: 'border-primary/40', icon: MessageSquare };
+    return { bg: 'bg-primary/10', text: 'text-primary', border: 'border-primary/30', icon: MessageSquare };
   }
 
   // Fallback to label-based styling for LOW or unspecified
+  // We use text-on-surface-variant to ensure it flips correctly between themes
   switch (label) {
     case 'receipt':
-      return { bg: 'bg-surface-container-high', text: 'text-green-300', border: 'border-outline-variant/30', icon: Receipt };
+      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Receipt, iconColor: 'text-green-500' };
     case 'digest':
-      return { bg: 'bg-surface-container-high', text: 'text-purple-300', border: 'border-outline-variant/30', icon: Newspaper };
+      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Newspaper, iconColor: 'text-purple-500' };
     case 'social':
-      return { bg: 'bg-surface-container-high', text: 'text-orange-300', border: 'border-outline-variant/30', icon: Share2 };
+      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Share2, iconColor: 'text-blue-500' };
     default:
-      return { bg: 'bg-surface-container', text: 'text-outline-variant', border: 'border-outline-variant/30', icon: Info };
+      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Info, iconColor: 'text-outline-variant' };
   }
 }
