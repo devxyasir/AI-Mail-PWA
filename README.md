@@ -34,7 +34,8 @@ cd AI-Mail-PWA
 
 2. Install dependencies:
 ```bash
-npm install
+# If you encounter peer dependency conflicts, use --legacy-peer-deps
+npm install --legacy-peer-deps
 ```
 
 3. Configure environment variables in `.env.local`:
