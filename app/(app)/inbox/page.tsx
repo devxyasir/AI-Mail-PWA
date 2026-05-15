@@ -273,7 +273,7 @@ export default function InboxPage() {
             <div className="p-fib-13 border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
               <div className="flex items-center gap-fib-8 text-primary">
                 <Sparkles className="h-fib-13 w-fib-13" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Neural Assistant</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Smart Assistant</span>
               </div>
               <button onClick={() => setIsChatOpen(false)} className="text-outline-variant hover:text-on-surface p-1">
                 <X className="h-fib-21 w-fib-21 lg:h-fib-13 lg:w-fib-13" />

@@ -5,7 +5,7 @@ import useSWR from 'swr';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Mail, Shield, Globe, Lock, Cpu, Server, Layers, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Mail, Shield, Globe, Lock, Server, Layers, ChevronRight, LayoutDashboard, Sparkles } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
@@ -43,17 +43,16 @@ export default function SignInPage() {
             <div className="w-fib-34 h-fib-34 bg-on-primary flex items-center justify-center text-primary">
               <Mail className="h-fib-21 w-fib-21" />
             </div>
-            <span className="font-mono font-bold tracking-[0.4em] text-[12px] uppercase">Antigravity Core</span>
+            <span className="font-mono font-bold tracking-[0.4em] text-[12px] uppercase">SmartMail AI</span>
           </div>
           
           <div className="pt-fib-55">
             <h1 className="text-5xl md:text-7xl font-serif font-bold leading-[1.1] tracking-tighter">
-              INDUSTRIAL <br />
-              INTELLIGENCE.
+              SIMPLE.<br />
+              SMART. FAST.
             </h1>
             <p className="mt-fib-21 max-w-md text-on-primary/60 font-mono text-[11px] leading-relaxed uppercase tracking-widest">
-              Unified communication protocol for high-performance workflows. 
-              Zero-latency synchronization. End-to-end neural encryption.
+              One place for all your emails. Powered by AI to help you read and write faster.
             </p>
           </div>
         </div>
@@ -62,16 +61,16 @@ export default function SignInPage() {
           <div className="space-y-fib-5">
             <div className="flex items-center gap-fib-8 text-on-primary/80">
               <Lock className="h-fib-13 w-fib-13" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Encrypted</span>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Secure</span>
             </div>
-            <p className="text-[9px] text-on-primary/40 uppercase font-mono">AES-256 GCM Core</p>
+            <p className="text-[9px] text-on-primary/40 uppercase font-mono">Your data is encrypted</p>
           </div>
           <div className="space-y-fib-5">
             <div className="flex items-center gap-fib-8 text-on-primary/80">
-              <Cpu className="h-fib-13 w-fib-13" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Neural</span>
+              <Sparkles className="h-fib-13 w-fib-13" />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Intelligent</span>
             </div>
-            <p className="text-[9px] text-on-primary/40 uppercase font-mono">Llama-3 Architecture</p>
+            <p className="text-[9px] text-on-primary/40 uppercase font-mono">AI handles the hard work</p>
           </div>
         </div>
       </div>
@@ -80,8 +79,8 @@ export default function SignInPage() {
       <div className="w-full md:w-[450px] bg-surface flex flex-col p-fib-34 md:p-fib-55 animate-in relative">
         <div className="flex-1 flex flex-col justify-center">
           <div className="mb-fib-55">
-            <h2 className="text-2xl font-serif font-bold tracking-tight uppercase text-on-surface">Authentication</h2>
-            <p className="text-[10px] font-mono font-bold text-outline-variant uppercase tracking-widest mt-fib-3">Select communication protocol</p>
+            <h2 className="text-2xl font-serif font-bold tracking-tight uppercase text-on-surface">Sign In</h2>
+            <p className="text-[10px] font-mono font-bold text-outline-variant uppercase tracking-widest mt-fib-3">Choose your sign-in method</p>
           </div>
 
           {!showImap && !showMicrosoftWarning ? (
@@ -111,7 +110,7 @@ export default function SignInPage() {
                 leftIcon={<Globe className="h-fib-13 w-fib-13 text-primary" />}
                 rightIcon={<ChevronRight className="h-fib-13 w-fib-13 opacity-0 group-hover:opacity-100 transition-all" />}
               >
-                Google Workspace
+                Google
               </Button>
 
               <Button 
@@ -123,7 +122,7 @@ export default function SignInPage() {
                 leftIcon={<Layers className="h-fib-13 w-fib-13 text-primary" />}
                 rightIcon={<ChevronRight className="h-fib-13 w-fib-13 opacity-0 group-hover:opacity-100 transition-all" />}
               >
-                Office 365
+                Microsoft
               </Button>
 
               <Button 
@@ -135,7 +134,7 @@ export default function SignInPage() {
                 leftIcon={<Server className="h-fib-13 w-fib-13 text-primary" />}
                 rightIcon={<ChevronRight className="h-fib-13 w-fib-13 opacity-0 group-hover:opacity-100 transition-all" />}
               >
-                IMAP Protocol
+                Other (IMAP)
               </Button>
             </div>
           ) : showMicrosoftWarning ? (

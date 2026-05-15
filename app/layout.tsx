@@ -5,13 +5,13 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'AI Mail | Professional Email Client',
-  description: 'Sleek, high-performance AI-powered email management.',
+  title: 'SmartMail AI | Simple Professional Email',
+  description: 'SmartMail AI connects all your email accounts in one place. It uses AI to summarize long threads and help you write professional replies faster.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'AI Mail',
+    title: 'SmartMail AI',
   },
 };
 

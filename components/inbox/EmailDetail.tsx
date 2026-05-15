@@ -106,14 +106,14 @@ export function EmailDetail({ messageId, accountId, onBack, onUseDraft }: { mess
               <div className="p-fib-13 bg-surface-container-low border border-outline-variant/30 text-on-surface-variant">
                 <span className="font-mono text-[10px] font-bold text-primary block mb-fib-5 uppercase tracking-widest flex items-center gap-fib-5">
                   <Sparkles className="h-fib-8 w-fib-8" />
-                  Neural Summary
+                  AI Summary
                 </span>
                 <Markdown content={message.aiSummary} />
               </div>
             ) : (
               <div className="p-fib-13 border border-outline-variant/30 flex items-center gap-fib-13 animate-pulse">
                 <div className="h-fib-8 w-fib-8 border-2 border-primary border-t-transparent animate-spin" />
-                <span className="text-[9px] font-mono font-bold text-outline-variant uppercase tracking-[0.2em]">Synthesizing intelligence...</span>
+                <span className="text-[9px] font-mono font-bold text-outline-variant uppercase tracking-[0.2em]">Thinking...</span>
               </div>
             )}
           </section>
@@ -179,7 +179,7 @@ export function EmailDetail({ messageId, accountId, onBack, onUseDraft }: { mess
           {/* AI Drafting Section */}
           <section className="pt-fib-34 border-t border-outline-variant/30 space-y-fib-21">
             <div className="flex items-center gap-fib-8">
-              <h3 className="text-[11px] font-mono font-bold text-primary uppercase tracking-[0.3em]">Neural Workspace</h3>
+              <h3 className="text-[11px] font-mono font-bold text-primary uppercase tracking-[0.3em]">AI Reply Helper</h3>
               <div className="h-fib-1 flex-1 bg-outline-variant/20" />
             </div>
             

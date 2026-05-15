@@ -52,8 +52,8 @@ export function AIReplyDraft({ messageId, accountId, onUse }: AIReplyDraftProps)
             <Sparkles className="h-fib-13 w-fib-13" />
           </div>
           <div>
-            <h3 className="text-[11px] font-mono font-bold tracking-[0.2em] text-on-surface uppercase">Neural Drafting</h3>
-            <p className="text-[9px] font-mono text-outline-variant uppercase tracking-widest">Contextual Reply Engine</p>
+            <h3 className="text-[11px] font-mono font-bold tracking-[0.2em] text-on-surface uppercase">AI Reply Draft</h3>
+            <p className="text-[9px] font-mono text-outline-variant uppercase tracking-widest">Smart suggestions based on this thread</p>
           </div>
         </div>
         {!draft && (
@@ -64,7 +64,7 @@ export function AIReplyDraft({ messageId, accountId, onUse }: AIReplyDraftProps)
             isLoading={isLoading}
             leftIcon={<Sparkles className="h-fib-13 w-fib-13" />}
           >
-            GENERATE DRAFT
+            GENERATE
           </Button>
         )}
       </div>
@@ -89,7 +89,7 @@ export function AIReplyDraft({ messageId, accountId, onUse }: AIReplyDraftProps)
       {isLoading && (
         <div className="py-fib-34 flex flex-col items-center justify-center gap-fib-13 animate-pulse">
           <div className="h-fib-21 w-fib-21 border-2 border-primary border-t-transparent animate-spin" />
-          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary">Syncing Neural Core...</span>
+          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary">Thinking...</span>
         </div>
       )}
 
@@ -149,7 +149,7 @@ export function AIReplyDraft({ messageId, accountId, onUse }: AIReplyDraftProps)
               leftIcon={<Layers className="h-fib-13 w-fib-13" />}
               className="flex-1"
             >
-              TRANSFER TO EDITOR
+              USE THIS DRAFT
             </Button>
           </div>
         </div>

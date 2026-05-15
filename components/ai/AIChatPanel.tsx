@@ -12,7 +12,7 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chat, setChat] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: 'Neural bridge active. Select a message or ask me anything.' }
+    { role: 'assistant', content: 'Hi! I\'m your Smart Assistant. I can help you summarize emails, find information, or draft replies.' }
   ]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -38,12 +38,12 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
       if (data.message) {
         setChat(prev => [...prev, { role: 'assistant', content: data.message }]);
       } else {
-        throw new Error(data.error || 'Failed to connect to Neural Core');
+        throw new Error(data.error || 'Something went wrong. Please try again.');
       }
     } catch (error: any) {
       setChat(prev => [...prev, { 
         role: 'assistant', 
-        content: `ERR: ${error.message}. Ensure system credentials are active.` 
+        content: `Sorry, I encountered an error. Please check your connection and try again.` 
       }]);
     } finally {
       setIsLoading(false);
@@ -79,7 +79,7 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
           <div className="flex gap-fib-8 lg:gap-fib-13 animate-pulse">
             <div className="h-fib-21 lg:h-fib-34 w-fib-21 lg:w-fib-34 bg-surface-container border border-outline-variant" />
             <div className="bg-surface-container-low border border-outline-variant p-fib-8 lg:p-fib-13 text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-outline">
-              Neural Processing...
+              Thinking...
             </div>
           </div>
         )}
@@ -98,7 +98,7 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
                 handleSubmit();
               }
             }}
-            placeholder={isLoading ? "SYNCHRONIZING..." : "NEURAL PROMPT..."}
+            placeholder={isLoading ? "THINKING..." : "ASK ME ANYTHING..."}
             className="w-full bg-surface-container border border-outline-variant focus:border-primary focus:bg-surface rounded-none p-fib-13 lg:p-fib-21 pr-fib-55 lg:pr-fib-55 text-[11px] lg:text-[12px] font-mono min-h-[70px] lg:min-h-[80px] resize-none transition-all outline-none disabled:opacity-50 shadow-inner"
           />
           <button 
@@ -113,7 +113,7 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
           </button>
         </div>
         <p className="mt-fib-8 text-[8px] font-mono font-bold text-outline-variant uppercase tracking-[0.3em] text-center opacity-40">
-          Encrypted Neural Bridge Active
+          Your conversations are private and secure
         </p>
       </form>
     </div>

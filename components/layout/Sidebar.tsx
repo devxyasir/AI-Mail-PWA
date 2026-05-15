@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { AccountSwitcher } from './AccountSwitcher';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, BookOpen } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -161,6 +161,15 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
       </div>
  
       <div className="mt-auto p-fib-13 border-t border-outline-variant space-y-fib-2">
+        <button 
+          onClick={() => router.push('/docs')}
+          className="flex w-full items-center gap-fib-13 px-fib-13 py-fib-8 text-[11px] font-mono font-bold tracking-widest text-outline-variant hover:text-primary hover:bg-surface-container rounded-none transition-all group"
+        >
+          <div className="group-hover:scale-110 transition-transform">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          DOCS
+        </button>
         <button 
           onClick={() => router.push('/settings')}
           className="flex w-full items-center gap-fib-13 px-fib-13 py-fib-8 text-[11px] font-mono font-bold tracking-widest text-outline-variant hover:text-primary hover:bg-surface-container rounded-none transition-all group"
