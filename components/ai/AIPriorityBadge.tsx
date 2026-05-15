@@ -50,18 +50,19 @@ function getPriorityConfig(label: PriorityLabel, category?: PriorityCategory) {
     return { bg: 'bg-secondary', text: 'text-on-secondary', border: 'border-secondary-container', icon: Bookmark };
   }
   if (category === 'MEDIUM') {
-    return { bg: 'bg-primary-container', text: 'text-on-primary-container', border: 'border-primary/20', icon: MessageSquare };
+    // Use a lighter blue with better contrast for the dark theme
+    return { bg: 'bg-primary/30', text: 'text-blue-300', border: 'border-primary/40', icon: MessageSquare };
   }
 
   // Fallback to label-based styling for LOW or unspecified
   switch (label) {
     case 'receipt':
-      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Receipt };
+      return { bg: 'bg-surface-container-high', text: 'text-green-300', border: 'border-outline-variant/30', icon: Receipt };
     case 'digest':
-      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Newspaper };
+      return { bg: 'bg-surface-container-high', text: 'text-purple-300', border: 'border-outline-variant/30', icon: Newspaper };
     case 'social':
-      return { bg: 'bg-surface-container', text: 'text-on-surface-variant', border: 'border-outline-variant/30', icon: Share2 };
+      return { bg: 'bg-surface-container-high', text: 'text-orange-300', border: 'border-outline-variant/30', icon: Share2 };
     default:
-      return { bg: 'bg-surface-container', text: 'text-outline', border: 'border-outline-variant/30', icon: Info };
+      return { bg: 'bg-surface-container', text: 'text-outline-variant', border: 'border-outline-variant/30', icon: Info };
   }
 }

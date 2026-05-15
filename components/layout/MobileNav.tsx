@@ -10,8 +10,8 @@ export function MobileNav() {
 
   const navItems = [
     { label: 'Inbox', icon: Mail, path: '/inbox' },
-    { label: 'AI', icon: Sparkles, path: '/ai' },
-    { label: 'Search', icon: Search, path: '/search' },
+    { label: 'AI', icon: Sparkles, path: '/inbox?ai=true' },
+    { label: 'Search', icon: Search, path: '/inbox?search=true' },
     { label: 'Settings', icon: Settings, path: '/settings' },
   ];
 

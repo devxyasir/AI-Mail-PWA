@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import useSWR from 'swr';
 import { User, ChevronDown, Check, Plus, LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Spinner } from '../ui/Spinner';
 
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 export function AccountSwitcher({ onAccountSwitch }: { onAccountSwitch?: () => void }) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { data, error, isLoading } = useSWR('/api/accounts', fetcher);
   
@@ -64,19 +66,15 @@ export function AccountSwitcher({ onAccountSwitch }: { onAccountSwitch?: () => v
             
             <div className="h-fib-1 bg-outline-variant/30 my-fib-5 mx-fib-5" />
             
-            <button className="flex w-full items-center gap-fib-8 p-fib-8 hover:bg-surface-container transition-all text-primary rounded-none">
-              <Plus className="h-fib-8 w-fib-8" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Connect Intelligence</span>
-            </button>
-            
             <button 
               onClick={() => {
-                import('next-auth/react').then(mod => mod.signOut());
+                setIsOpen(false);
+                router.push('/auth/signin');
               }}
-              className="flex w-full items-center gap-fib-8 p-fib-8 hover:bg-error-container/10 transition-all text-error rounded-none"
+              className="flex w-full items-center gap-fib-8 p-fib-8 hover:bg-surface-container transition-all text-primary rounded-none"
             >
-              <LogOut className="h-fib-8 w-fib-8" />
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Disconnect Core</span>
+              <Plus className="h-fib-8 w-fib-8" />
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Add Account</span>
             </button>
           </div>
         </div>

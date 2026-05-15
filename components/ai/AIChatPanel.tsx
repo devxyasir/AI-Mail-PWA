@@ -12,7 +12,7 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chat, setChat] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: 'Neural context ready. Select an email to analyze or ask me anything about your communications.' }
+    { role: 'assistant', content: 'Neural bridge active. Select a message or ask me anything.' }
   ]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -53,17 +53,19 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
   return (
     <div className="flex h-full flex-col bg-surface-container-lowest">
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-fib-13 space-y-fib-13 custom-scrollbar" ref={(el) => el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })}>
+      <div className="flex-1 overflow-y-auto p-fib-13 lg:p-fib-21 space-y-fib-13 custom-scrollbar scroll-smooth" ref={(el) => {
+        if (el) el.scrollTop = el.scrollHeight;
+      }}>
         {chat.map((msg, i) => (
-          <div key={i} className={`flex gap-fib-8 ${msg.role === 'user' ? 'flex-row-reverse' : ''} animate-in fade-in slide-in-from-bottom-fib-5`}>
-            <div className={`h-fib-21 w-fib-21 flex items-center justify-center shrink-0 border border-outline-variant ${msg.role === 'assistant' ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'}`}>
-              {msg.role === 'assistant' ? <Sparkles className="h-fib-8 w-fib-8" /> : <User className="h-fib-8 w-fib-8" />}
+          <div key={i} className={`flex gap-fib-8 lg:gap-fib-13 ${msg.role === 'user' ? 'flex-row-reverse' : ''} animate-in fade-in slide-in-from-bottom-fib-5 duration-500`}>
+            <div className={`h-fib-21 lg:h-fib-34 w-fib-21 lg:w-fib-34 flex items-center justify-center shrink-0 border border-outline-variant shadow-sm ${msg.role === 'assistant' ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'}`}>
+              {msg.role === 'assistant' ? <Sparkles className="h-fib-13 w-fib-13 lg:h-fib-18 lg:w-fib-18" /> : <User className="h-fib-13 w-fib-13 lg:h-fib-18 lg:w-fib-18" />}
             </div>
             <div className={`
-              max-w-[85%] p-fib-13 border border-outline-variant tracking-tight
+              max-w-[85%] p-fib-13 lg:p-fib-21 border border-outline-variant tracking-tight shadow-sm transition-all
               ${msg.role === 'assistant' 
-                ? 'bg-surface-container-low text-on-surface' 
-                : 'bg-primary text-on-primary text-[11px] font-mono font-bold uppercase'}
+                ? 'bg-surface-container-low text-on-surface text-[13px] lg:text-[14px] leading-relaxed' 
+                : 'bg-primary text-on-primary text-[10px] lg:text-[11px] font-mono font-bold uppercase tracking-widest'}
             `}>
               {msg.role === 'assistant' ? (
                 <Markdown content={msg.content} />
@@ -74,9 +76,9 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
           </div>
         ))}
         {isLoading && (
-          <div className="flex gap-fib-8 animate-pulse">
-            <div className="h-fib-21 w-fib-21 bg-surface-container border border-outline-variant" />
-            <div className="bg-surface-container-low border border-outline-variant p-fib-8 text-[9px] font-mono font-bold uppercase tracking-widest text-outline">
+          <div className="flex gap-fib-8 lg:gap-fib-13 animate-pulse">
+            <div className="h-fib-21 lg:h-fib-34 w-fib-21 lg:w-fib-34 bg-surface-container border border-outline-variant" />
+            <div className="bg-surface-container-low border border-outline-variant p-fib-8 lg:p-fib-13 text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-outline">
               Neural Processing...
             </div>
           </div>
@@ -84,7 +86,7 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
       </div>
 
       {/* Input Area */}
-      <form onSubmit={handleSubmit} className="p-fib-13 border-t border-outline-variant bg-surface">
+      <form onSubmit={handleSubmit} className="p-fib-13 lg:p-fib-21 border-t border-outline-variant bg-surface-container-lowest">
         <div className="relative group">
           <textarea 
             value={prompt}
@@ -96,17 +98,23 @@ export function AIChatPanel({ messageId }: AIChatPanelProps) {
                 handleSubmit();
               }
             }}
-            placeholder={isLoading ? "Syncing..." : "Neural prompt..."}
-            className="w-full bg-surface-container-low text-on-surface placeholder:text-outline-variant border border-outline-variant focus:border-primary rounded-none p-fib-8 pr-fib-34 text-[11px] font-mono min-h-[60px] resize-none transition-all outline-none disabled:opacity-50"
+            placeholder={isLoading ? "SYNCHRONIZING..." : "NEURAL PROMPT..."}
+            className="w-full bg-surface-container border border-outline-variant focus:border-primary focus:bg-surface rounded-none p-fib-13 lg:p-fib-21 pr-fib-55 lg:pr-fib-55 text-[11px] lg:text-[12px] font-mono min-h-[70px] lg:min-h-[80px] resize-none transition-all outline-none disabled:opacity-50 shadow-inner"
           />
           <button 
             type="submit" 
             disabled={isLoading || !prompt.trim()}
-            className="absolute bottom-fib-8 right-fib-8 p-fib-5 bg-primary text-on-primary rounded-none hover:bg-primary/90 transition-all disabled:bg-outline-variant"
+            className={`
+              absolute bottom-fib-13 right-fib-13 lg:bottom-fib-21 lg:right-fib-21 p-fib-8 lg:p-fib-13 transition-all duration-300
+              ${isLoading || !prompt.trim() ? 'bg-outline-variant text-on-surface/30 cursor-not-allowed' : 'bg-primary text-on-primary hover:bg-primary-container hover:text-primary shadow-lg'}
+            `}
           >
-            {isLoading ? <div className="h-fib-13 w-fib-13 border-2 border-on-primary border-t-transparent animate-spin" /> : <Send className="h-fib-13 w-fib-13" />}
+            {isLoading ? <div className="h-fib-13 w-fib-13 lg:h-fib-18 lg:w-fib-18 border-2 border-on-primary border-t-transparent animate-spin" /> : <Send className="h-fib-13 w-fib-13 lg:h-fib-18 lg:w-fib-18" />}
           </button>
         </div>
+        <p className="mt-fib-8 text-[8px] font-mono font-bold text-outline-variant uppercase tracking-[0.3em] text-center opacity-40">
+          Encrypted Neural Bridge Active
+        </p>
       </form>
     </div>
   );

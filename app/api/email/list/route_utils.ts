@@ -9,23 +9,26 @@ export async function triggerEmailIndexing(accountId: string, messages: Normaliz
     const { createEmbedding } = await import('@/lib/ai/embeddings');
     const { calculatePriority } = await import('@/lib/ai/priority');
 
-    // 1. Process Priorities FIRST (Cheaper and faster)
+    // 1. Check for existing priorities in BATCH to avoid N+1 queries
+    const providerIds = messages.map(m => m.providerMessageId);
+    const { data: existingData } = await db()
+      .from('email_ai_data')
+      .select('provider_message_id, priority_label, priority_score')
+      .eq('account_id', accountId)
+      .in('provider_message_id', providerIds);
+
+    const existingMap = new Map((existingData as any[])?.map(d => [d.provider_message_id, d]) || []);
+
+    // 2. Process Priorities (Only for NEW or missing messages)
     const priorityResults = await Promise.all(messages.map(async (m) => {
       try {
-        console.log(`[AI] Analyzing: "${m.subject.substring(0, 30)}..."`);
+        const existing = existingMap.get(m.providerMessageId);
         
-        // Check if already prioritized to avoid redundant AI calls
-        const { data: existing } = await db()
-          .from('email_ai_data')
-          .select('priority_label, priority_score')
-          .eq('account_id', accountId)
-          .eq('provider_message_id', m.providerMessageId)
-          .single() as any;
-
         if (existing?.priority_label && existing?.priority_score !== undefined) {
           return { ...m, priority: existing.priority_label };
         }
 
+        console.log(`[AI] Analyzing: "${m.subject.substring(0, 30)}..."`);
         const { calculatePriority } = await import('@/lib/ai/priority');
         const p = await calculatePriority(m.from, m.subject, m.snippet, m.labels);
         console.log(`[AI] Priority for "${m.providerMessageId}": ${p.label} (${p.score})`);
@@ -41,7 +44,7 @@ export async function triggerEmailIndexing(accountId: string, messages: Normaliz
         return { ...m, priority: p.label };
       } catch (err) {
         console.error(`[AI] Priority failed for ${m.providerMessageId}:`, err);
-        return { ...m, priority: 'medium' };
+        return { ...m, priority: 'low' };
       }
     }));
 

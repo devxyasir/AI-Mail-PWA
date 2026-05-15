@@ -2,11 +2,14 @@
 
 import { SessionProvider } from 'next-auth/react';
 import { ReactNode } from 'react';
+import { UIProvider } from '@/lib/contexts/UIContext';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <SessionProvider>
-      {children}
+      <UIProvider>
+        {children}
+      </UIProvider>
     </SessionProvider>
   );
 }

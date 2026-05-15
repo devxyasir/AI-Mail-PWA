@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import useSWRInfinite from 'swr/infinite';
-import { Mail, Search, Filter, MessageSquare, Sparkles, X } from 'lucide-react';
+import { Mail, Search, Filter, MessageSquare, Sparkles, X, Menu } from 'lucide-react';
 import { InboxList } from '@/components/inbox/InboxList';
 import { EmailDetail } from '@/components/inbox/EmailDetail';
 import { AIChatPanel } from '@/components/ai/AIChatPanel';
 import { ComposeModal } from '@/components/compose/ComposeModal';
 import { NotificationToast } from '@/components/ui/NotificationToast';
+import { useUI } from '@/lib/contexts/UIContext';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -19,11 +20,20 @@ export default function InboxPage() {
   const labelId = searchParams?.get('labelId') || 'INBOX';
   const priority = searchParams?.get('priority');
   const query = searchParams?.get('q');
+  const triggerAi = searchParams?.get('ai') === 'true';
+  const triggerSearch = searchParams?.get('search') === 'true';
 
+  const { toggleSidebar } = useUI();
   const [selected, setSelected] = useState<{ id: string; accountId: string } | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [composeInitial, setComposeInitial] = useState<{ to?: string; subject?: string; body?: string }>({});
+
+  // Handle mobile triggers from nav
+  React.useEffect(() => {
+    if (triggerAi) setIsChatOpen(true);
+    if (triggerSearch) setIsSearchVisible(true);
+  }, [triggerAi, triggerSearch]);
 
   const openCompose = (to = '', subject = '', body = '') => {
     setComposeInitial({ to, subject, body });
@@ -122,32 +132,39 @@ export default function InboxPage() {
       />
 
       {/* Header */}
-      <header className="flex h-fib-55 items-center justify-between border-b border-outline-variant px-fib-21 bg-surface-container-lowest sticky top-0 z-20">
-        <div className="flex items-center gap-fib-13 flex-1">
-          <div className="p-fib-5 bg-primary text-on-primary shrink-0">
-            <Mail className="h-fib-21 w-fib-21" />
+      <header className="flex h-fib-55 items-center justify-between border-b border-outline-variant px-fib-13 lg:px-fib-21 bg-surface-container-lowest sticky top-0 z-20">
+        <div className="flex items-center gap-fib-8 lg:gap-fib-13 flex-1 overflow-hidden">
+          <button 
+            onClick={toggleSidebar}
+            className="lg:hidden p-fib-8 text-on-surface-variant hover:bg-surface-container transition-colors"
+          >
+            <Menu className="h-fib-21 w-fib-21" />
+          </button>
+          
+          <div className="p-fib-5 bg-primary text-on-primary shrink-0 hidden xs:block">
+            <Mail className="h-fib-18 lg:h-fib-21 w-fib-18 lg:h-fib-21" />
           </div>
-          <div className="overflow-hidden">
-            <h1 className="text-lg font-serif font-bold tracking-tight text-on-surface uppercase truncate">
+          <div className="overflow-hidden min-w-0">
+            <h1 className="text-sm lg:text-lg font-serif font-bold tracking-tight text-on-surface uppercase truncate">
               {priority ? priority : labelId.replace(/^CATEGORY_/, '')}
             </h1>
-            <p className="text-[9px] font-mono font-bold tracking-widest text-outline-variant uppercase">
+            <p className="text-[8px] lg:text-[9px] font-mono font-bold tracking-widest text-outline-variant uppercase truncate">
               {messages.length} Units in Stack
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-fib-8">
+        <div className="flex items-center gap-fib-2 lg:gap-fib-8">
           {/* Search Input (Conditional) */}
           {isSearchVisible && (
             <form onSubmit={handleSearch} className="flex items-center animate-in slide-in-from-right-fib-13">
               <input
                 autoFocus
                 type="text"
-                placeholder="SEARCH STACK..."
+                placeholder="SEARCH..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="bg-surface-container border border-outline-variant px-fib-13 py-fib-5 text-[11px] font-mono font-bold focus:outline-none focus:border-primary w-48"
+                className="bg-surface-container border border-outline-variant px-fib-8 lg:px-fib-13 py-fib-5 text-[10px] lg:text-[11px] font-mono font-bold focus:outline-none focus:border-primary w-24 lg:w-48 transition-all"
               />
             </form>
           )}
@@ -156,15 +173,15 @@ export default function InboxPage() {
             onClick={() => setIsSearchVisible(!isSearchVisible)}
             className={`p-fib-8 transition-colors ${isSearchVisible ? 'text-primary bg-surface-container' : 'text-on-surface-variant hover:bg-surface-container'}`}
           >
-            <Search className="h-fib-21 w-fib-21" />
+            <Search className="h-fib-18 lg:h-fib-21 w-fib-18 lg:h-fib-21" />
           </button>
 
-          <div className="relative">
+          <div className="relative hidden xs:block">
             <button
               onClick={() => setIsFilterVisible(!isFilterVisible)}
               className={`p-fib-8 transition-colors ${isFilterVisible ? 'text-primary bg-surface-container' : 'text-on-surface-variant hover:bg-surface-container'}`}
             >
-              <Filter className="h-fib-21 w-fib-21" />
+              <Filter className="h-fib-18 lg:h-fib-21 w-fib-18 lg:h-fib-21" />
             </button>
 
             {isFilterVisible && (
@@ -181,10 +198,10 @@ export default function InboxPage() {
             )}
           </div>
 
-          <div className="h-fib-21 w-fib-1 bg-outline-variant/30" />
+          <div className="h-fib-21 w-fib-1 bg-outline-variant/30 hidden xs:block" />
           <button
             onClick={() => openCompose()}
-            className="px-fib-21 py-fib-8 bg-secondary text-on-secondary font-mono font-bold text-[11px] uppercase tracking-widest hover:bg-secondary/90 transition-all whitespace-nowrap"
+            className="px-fib-13 lg:px-fib-21 py-fib-8 bg-secondary text-on-secondary font-mono font-bold text-[10px] lg:text-[11px] uppercase tracking-widest hover:bg-secondary/90 transition-all whitespace-nowrap"
           >
             Compose
           </button>
@@ -192,13 +209,13 @@ export default function InboxPage() {
       </header>
 
       {/* Content Area - Split View */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* List Pane */}
         <main className={`
           overflow-y-auto custom-scrollbar border-r border-outline-variant transition-all duration-300
-          ${selected ? 'w-[400px]' : 'flex-1'}
+          ${selected ? 'hidden lg:block lg:w-[400px]' : 'flex-1'}
         `}>
-          <div className="p-fib-13 space-y-fib-13">
+          <div className="p-fib-8 lg:p-fib-13 space-y-fib-8 lg:space-y-fib-13">
             <InboxList
               messages={messages}
               isLoading={isLoadingInitialData}
@@ -207,7 +224,7 @@ export default function InboxPage() {
             />
 
             {!isReachingEnd && (
-              <div className="flex justify-center py-fib-21">
+              <div className="flex justify-center py-fib-21 pb-fib-89 lg:pb-fib-21">
                 <button
                   onClick={() => setSize(size + 1)}
                   disabled={isLoadingMore}
@@ -222,7 +239,7 @@ export default function InboxPage() {
 
         {/* Detail Pane - Only shown when selected */}
         {selected && (
-          <aside className="flex-1 overflow-hidden bg-surface-container-lowest animate-in fade-in slide-in-from-right-fib-21 duration-300">
+          <aside className="flex-1 overflow-hidden bg-surface-container-lowest animate-in fade-in slide-in-from-right-fib-21 duration-300 absolute inset-0 lg:relative z-10 lg:z-0">
             <EmailDetail
               messageId={selected.id}
               accountId={selected.accountId}
@@ -234,16 +251,19 @@ export default function InboxPage() {
       </div>
 
       {/* Floating AI Assistant */}
-      <div className="fixed bottom-fib-21 right-fib-21 z-50 flex flex-col items-end gap-fib-13">
+      <div className="fixed bottom-0 right-0 lg:bottom-fib-21 lg:right-fib-21 z-50 flex flex-col items-end pointer-events-none">
         {isChatOpen && (
-          <div className="w-[380px] h-[500px] bg-surface border border-outline-variant shadow-none animate-in flex flex-col">
+          <div className={`
+            bg-surface border-x lg:border border-outline-variant shadow-2xl animate-in slide-in-from-bottom-fib-21 flex flex-col pointer-events-auto
+            w-screen h-[calc(100vh-80px)] lg:w-[380px] lg:h-[500px]
+          `}>
             <div className="p-fib-13 border-b border-outline-variant bg-surface-container-low flex items-center justify-between">
               <div className="flex items-center gap-fib-8 text-primary">
                 <Sparkles className="h-fib-13 w-fib-13" />
                 <span className="text-[10px] font-mono font-bold uppercase tracking-widest">Neural Assistant</span>
               </div>
-              <button onClick={() => setIsChatOpen(false)} className="text-outline-variant hover:text-on-surface">
-                <X className="h-fib-13 w-fib-13" />
+              <button onClick={() => setIsChatOpen(false)} className="text-outline-variant hover:text-on-surface p-1">
+                <X className="h-fib-21 w-fib-21 lg:h-fib-13 lg:w-fib-13" />
               </button>
             </div>
             <div className="flex-1 overflow-hidden">
@@ -251,15 +271,17 @@ export default function InboxPage() {
             </div>
           </div>
         )}
-        <button
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className={`
-            h-fib-55 w-fib-55 flex items-center justify-center transition-all duration-300
-            ${isChatOpen ? 'bg-primary text-on-primary' : 'bg-secondary text-on-secondary shadow-lg'}
-          `}
-        >
-          {isChatOpen ? <MessageSquare className="h-fib-21 w-fib-21" /> : <Sparkles className="h-fib-21 w-fib-21" />}
-        </button>
+        <div className="p-fib-21 pointer-events-auto hidden lg:block">
+          <button
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            className={`
+              h-fib-55 w-fib-55 flex items-center justify-center transition-all duration-300
+              ${isChatOpen ? 'bg-primary text-on-primary' : 'bg-secondary text-on-secondary shadow-lg'}
+            `}
+          >
+            {isChatOpen ? <MessageSquare className="h-fib-21 w-fib-21" /> : <Sparkles className="h-fib-21 w-fib-21" />}
+          </button>
+        </div>
       </div>
 
       {/* Compose Modal */}

@@ -10,14 +10,14 @@
 import React, { useState, type ReactNode } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { MobileNav } from '@/components/layout/MobileNav';
-import { AIChatPanel } from '@/components/ai/AIChatPanel';
+import { useUI } from '@/lib/contexts/UIContext';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const { sidebarOpen, setSidebarOpen } = useUI();
 
   // Initialize background sync on app mount (only if authenticated)
   React.useEffect(() => {

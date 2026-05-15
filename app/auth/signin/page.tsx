@@ -7,6 +7,7 @@ import { Mail, Shield, Globe, Lock, Cpu, Server, Layers, ChevronRight } from 'lu
 
 export default function SignInPage() {
   const [showImap, setShowImap] = useState(false);
+  const [showMicrosoftWarning, setShowMicrosoftWarning] = useState(false);
   const [imapData, setImapData] = useState({
     email: '',
     password: '',
@@ -75,7 +76,7 @@ export default function SignInPage() {
             <p className="text-[10px] font-mono font-bold text-outline-variant uppercase tracking-widest mt-fib-3">Select communication protocol</p>
           </div>
 
-          {!showImap ? (
+          {!showImap && !showMicrosoftWarning ? (
             <div className="space-y-fib-13">
               <Button 
                 onClick={() => signIn('google', { callbackUrl: '/inbox' })}
@@ -90,7 +91,7 @@ export default function SignInPage() {
               </Button>
 
               <Button 
-                onClick={() => signIn('azure-ad', { callbackUrl: '/inbox' })}
+                onClick={() => setShowMicrosoftWarning(true)}
                 variant="outline"
                 size="lg"
                 fullWidth
@@ -112,6 +113,56 @@ export default function SignInPage() {
               >
                 IMAP Protocol
               </Button>
+            </div>
+          ) : showMicrosoftWarning ? (
+            <div className="space-y-fib-21 animate-in slide-in-from-right-fib-13">
+              <div className="p-fib-13 bg-error/5 border-l-2 border-error space-y-fib-13">
+                <div className="flex items-center gap-fib-8 text-error">
+                  <Shield className="h-fib-13 w-fib-13" />
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-widest">Protocol Limitation</span>
+                </div>
+                <p className="text-[11px] font-mono font-bold leading-relaxed text-on-surface/80 uppercase">
+                  Due to current account limitations, we are unable to retrieve Microsoft OAuth details at this stage.
+                </p>
+                <p className="text-[10px] font-mono font-bold text-outline-variant uppercase tracking-tight">
+                  Recommendation: Proceed with Google Workspace or IMAP Protocol for high-speed synchronization.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-fib-8">
+                <Button 
+                  onClick={() => setShowMicrosoftWarning(false)}
+                  variant="primary"
+                  fullWidth
+                  className="h-fib-55 font-mono text-[11px] font-bold tracking-widest uppercase"
+                >
+                  Skip & Return
+                </Button>
+                <div className="flex gap-fib-8">
+                  <Button 
+                    onClick={() => {
+                      setShowMicrosoftWarning(false);
+                      signIn('google', { callbackUrl: '/inbox' });
+                    }}
+                    variant="outline"
+                    fullWidth
+                    className="h-fib-34 font-mono text-[9px] font-bold uppercase tracking-widest"
+                  >
+                    Use Google
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      setShowMicrosoftWarning(false);
+                      setShowImap(true);
+                    }}
+                    variant="outline"
+                    fullWidth
+                    className="h-fib-34 font-mono text-[9px] font-bold uppercase tracking-widest"
+                  >
+                    Use IMAP
+                  </Button>
+                </div>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleImapLogin} className="space-y-fib-13 animate-in">
