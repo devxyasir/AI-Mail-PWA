@@ -4,6 +4,7 @@ import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Sparkles, User, Clock, ChevronRight } from 'lucide-react';
 import { AIPriorityBadge, PriorityLabel } from '../ai/AIPriorityBadge';
+import { NormalizedEmailMessage } from '@/lib/email/types';
 
 interface InboxItemProps {
   message: NormalizedEmailMessage & { priority?: PriorityLabel; aiScore?: number };

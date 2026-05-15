@@ -52,8 +52,9 @@ After each session: lint + test + build + commit.
 | 15 | Security | ring-2.6-1t:free | Security review + fixes |
 | 16 | Testing | qwen3-coder:free | Full test coverage |
 | 17 | UI/UX | qwen3-coder:free | PWA polish |
-| 18 | — | — | Vercel deployment |
-| 19 | Documentation | ring-2.6-1t:free | Final deliverables |
+| 18 | Rebranding | — | Global rename to SmartMail AI |
+| 19 | Vercel Deployment | — | Production build + deployment |
+| 20 | Documentation | ring-2.6-1t:free | Final deliverables |
 
 ## Daily Workflow Pattern
 

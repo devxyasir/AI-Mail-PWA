@@ -78,11 +78,11 @@ export class BackgroundSyncService {
   async runContinuousPrioritization() {
     try {
       // 1. Get IDs of already prioritized messages
-      const { data: prioritizedIds } = await db()
+      const { data: prioritizedIds } = await (db() as any)
         .from('email_ai_data')
         .select('provider_message_id');
       
-      const excludeIds = prioritizedIds?.map(p => p.provider_message_id) || [];
+      const excludeIds = (prioritizedIds as any[])?.map(p => p.provider_message_id) || [];
 
       // 2. Find messages in cache that are NOT in prioritized list
       let query = db()

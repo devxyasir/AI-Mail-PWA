@@ -264,7 +264,7 @@ export function ComposeModal({ onClose, onSent, initialTo = '', initialSubject =
                   className="flex-1 bg-surface-container border border-outline-variant px-fib-13 py-fib-8 text-[11px] font-mono font-bold focus:outline-none focus:border-secondary transition-all"
                 />
                 <Button 
-                  variant="secondary" 
+                  variant="cta" 
                   size="sm" 
                   onClick={() => handleAIWrite(true)}
                   isLoading={isDrafting}
